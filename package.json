@@ -2,6 +2,10 @@
   "name": "darksky",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "6.13.6",
+    "npm": "13.8.0"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
