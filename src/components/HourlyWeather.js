@@ -13,17 +13,16 @@ class HourlyWeather extends Component {
     };
 
     render() {
-        const renderWeather = ()=>{
+        const renderWeather = ()=> {
             if(this.props.hourlyWeather)  {
                 let icon = this.props.hourlyWeather['icon'];
 
                 return <div>
-                    <p>{this.props.hourlyWeather['summary']}  <i className={`wi ${iconMappings[icon]}`}></i></p>
+                    <p><span>{this.props.hourlyWeather['summary']}</span>  <i className={`wi ${iconMappings[icon]}`}></i></p>
                     {this.createHourlyWeatherList()}
-                </div> }
+                </div>
+            }
         };
-
-
         return (
             <div>
                 {renderWeather()}

@@ -1,12 +1,12 @@
 import React, { Component} from 'react';
 import $ from "jquery";
-import iconMappings from "./icons";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import DailyWeather from "./DailyWeather";
 import HourlyWeather from "./HourlyWeather";
 import Alerts from "./Alerts";
+import TranslationService from "../services/WeatherReportService";
 
 const DarkSkyKey = 'a1f574bebef94cd1267907386247a5e7';
 const ZipCodeAPIKey = 'js-XUto08W0lTnwXGrDFJbZcC4suIqYVMcr64OAE0MDD62pUB8zN6dDKXSD2Tlghwza';
@@ -28,54 +28,41 @@ class WeatherReport extends Component {
     };
 
     componentDidMount() {
+        //TODO: Use setTimeout to call populateWeatherInfo in the case when zipcode is not null, at regular intervals to fetch latest weather updates.
+    }
 
-        /*$.ajax( {
-            "url": `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${DarkSkyKey}/${this.state.location.lat},${this.state.location.lng},${currentUnixTimeStamp}`
-        }).done(function(res) {
+    getLocationDetails() {
+        var that = this;
+
+        var obtainZipcodeDeferred = new $.Deferred();
+        $.ajax({
+            "url": `https://www.zipcodeapi.com/rest/${ZipCodeAPIKey}/info.json/${this.state.zipcode}/degrees`,
+            "dataType": "json"
+        }).done(function(locationDetails) {
+            obtainZipcodeDeferred.resolve(locationDetails);
+        });
+        return obtainZipcodeDeferred.promise();
+    }
+
+    getWeather(locationDetails) {
+        var that = this;
+        var currentUnixTimeStamp = Math.floor(Date.now() / 1000);
+        $.ajax({
+            "url": `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${DarkSkyKey}/${locationDetails.lat},${locationDetails.lng},${currentUnixTimeStamp}`
+        }).done(function (weatherData) {
             let currentState = {...that.state};
-            currentState.temp = res.currently.apparentTemperature;
-            currentState.currentWeather = res.currently.summary;
-            currentState.currentWeatherInfo = res.currently;
-            currentState.currentSummary = res.hourly.summary;
-            currentState.alerts = res.alerts;
-            currentState.dailyWeatherInfo = res.daily;
-            currentState.hourlyWeatherInfo = res.hourly;
-            currentState.icon = iconMappings[res.currently.icon];
+            currentState = TranslationService.populateState(currentState, weatherData, locationDetails);
             that.setState({
                 ...currentState
             });
             that.forceUpdate();
-        });*/
+        });
     }
 
     populateWeatherInfo() {
         var that = this;
-        var locationDetails;
-        var currentUnixTimeStamp = Math.floor(Date.now() / 1000);
-        $.ajax({
-            "url": `https://www.zipcodeapi.com/rest/${ZipCodeAPIKey}/info.json/${this.state.zipcode}/degrees`,
-            "dataType": "json"
-        }).done(function(zipcodeDetails) {
-            locationDetails = zipcodeDetails;
-            $.ajax({
-                "url": `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${DarkSkyKey}/${locationDetails.lat},${locationDetails.lng},${currentUnixTimeStamp}`
-            }).done(function (res) {
-                let currentState = {...that.state};
-                currentState.location.city = zipcodeDetails.city;
-                currentState.location.state = zipcodeDetails.state;
-                currentState.temp = res.currently.apparentTemperature;
-                currentState.currentWeather = res.currently.summary;
-                currentState.currentWeatherInfo = res.currently;
-                currentState.currentSummary = res.hourly.summary;
-                currentState.alerts = res.alerts;
-                currentState.dailyWeatherInfo = res.daily;
-                currentState.hourlyWeatherInfo = res.hourly;
-                currentState.icon = iconMappings[res.currently.icon];
-                that.setState({
-                    ...currentState
-                });
-                that.forceUpdate();
-            });
+        this.getLocationDetails().then( (locationDetails) => {
+            that.getWeather(locationDetails);
         });
     }
 

@@ -22,7 +22,7 @@ class HourlyWeatherInfo extends Component {
                 <div style={{flexGrow: 2, flexShrink: 0, flexBasis:0}}>{formattedTime}</div>
                 <div style={{flexGrow: 2, flexShrink: 0, flexBasis:0}}><span>{this.props.weatherInfo['temperature']}</span><sup>o</sup>C</div>
                 <div style={{flexGrow: 2, flexShrink: 0, flexBasis:0}}>{this.props.weatherInfo['summary']}</div>
-            </div>)
+            </div>);
         return dom;
     };
 

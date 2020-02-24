@@ -18,7 +18,7 @@ class DailyWeather extends Component {
                 let icon = this.props.dailyWeather['icon'];
 
                 return <div>
-                <p>{this.props.dailyWeather['summary']}  <i className={`wi ${iconMappings[icon]}`}></i></p>
+                <p><span>{this.props.dailyWeather['summary']}</span>  <i className={`wi ${iconMappings[icon]}`}></i></p>
                 {this.createDailyWeatherList()}
             </div> }
         };

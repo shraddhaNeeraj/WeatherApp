@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React, { Component } from 'react';
 import 'weather-icons/css/weather-icons.css'
-import WeatherReport from "./components/WeatherDetails";
+import WeatherReport from "./components/WeatherReport";
 
 class App extends Component {
   render() {
